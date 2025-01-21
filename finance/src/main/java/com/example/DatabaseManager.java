@@ -397,4 +397,71 @@ public class DatabaseManager {
         }
         return transactions;
     }
+    
+    public Map<String, Double> getWalletSummary(String uuid, int walletId) {
+        String getUserIdSql = "SELECT id FROM users WHERE uuid = ?";
+        String sql = "SELECT SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) AS total_income, "
+                   + "SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS total_expense "
+                   + "FROM transactions WHERE wallet_id = ? AND user_id = ?";
+    
+        Map<String, Double> summary = new HashMap<>();
+    
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement getUserIdStmt = conn.prepareStatement(getUserIdSql);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    
+            getUserIdStmt.setString(1, uuid);
+            ResultSet rsUser = getUserIdStmt.executeQuery();
+    
+            if (rsUser.next()) {
+                int userId = rsUser.getInt("id");
+                pstmt.setInt(1, walletId);
+                pstmt.setInt(2, userId);
+                ResultSet rs = pstmt.executeQuery();
+    
+                if (rs.next()) {
+                    summary.put("total_income", rs.getDouble("total_income"));
+                    summary.put("total_expense", rs.getDouble("total_expense"));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка при получении доходов/расходов по кошельку: " + e.getMessage());
+        }
+        return summary;
+    }
+    
+    public Map<String, Double> getCategorySummary(String uuid, int walletId, List<Integer> categoryIds) {
+        String getUserIdSql = "SELECT id FROM users WHERE uuid = ?";
+        String sql = "SELECT SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) AS total_income, "
+                   + "SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS total_expense "
+                   + "FROM transactions WHERE wallet_id = ? AND user_id = ? AND category_id IN (%s)";
+    
+        String inClause = String.join(",", categoryIds.stream().map(String::valueOf).toArray(String[]::new));
+        sql = String.format(sql, inClause);
+    
+        Map<String, Double> summary = new HashMap<>();
+    
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement getUserIdStmt = conn.prepareStatement(getUserIdSql);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    
+            getUserIdStmt.setString(1, uuid);
+            ResultSet rsUser = getUserIdStmt.executeQuery();
+    
+            if (rsUser.next()) {
+                int userId = rsUser.getInt("id");
+                pstmt.setInt(1, walletId);
+                pstmt.setInt(2, userId);
+                ResultSet rs = pstmt.executeQuery();
+    
+                if (rs.next()) {
+                    summary.put("total_income", rs.getDouble("total_income"));
+                    summary.put("total_expense", rs.getDouble("total_expense"));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка при получении доходов/расходов по категориям: " + e.getMessage());
+        }
+        return summary;
+    }
 }

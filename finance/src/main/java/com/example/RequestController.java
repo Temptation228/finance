@@ -13,13 +13,15 @@ public class RequestController implements HttpHandler {
     private final WalletHandler walletHandler;
     private final CategoryHandler categoryHandler;
     private final TransactionHandler transactionHandler;
+    private final SummaryHandler summaryHandler;
 
     public RequestController(DatabaseManager databaseManager) {
         this.registerHandler = new RegisterHandler(databaseManager);
         this.authHandler = new AuthHandler(databaseManager);
         this.walletHandler = new WalletHandler(databaseManager); 
         this.categoryHandler = new CategoryHandler(databaseManager);  
-        this.transactionHandler = new TransactionHandler(databaseManager);   
+        this.transactionHandler = new TransactionHandler(databaseManager);  
+        this.summaryHandler = new SummaryHandler(databaseManager); 
     }
 
     @Override
@@ -43,7 +45,9 @@ public class RequestController implements HttpHandler {
             categoryHandler.handle(exchange);
         } else if ("/transaction".equals(path)) {
             transactionHandler.handle(exchange);
-        }else {
+        } else if ("/summary".equals(path)) {
+            summaryHandler.handle(exchange);
+        } else {
             exchange.sendResponseHeaders(404, -1);
         }
     }
