@@ -159,11 +159,52 @@ curl -X POST http://localhost:8000/transaction -H "Content-Type: application/jso
 curl -X GET "http://localhost:8000/transaction?uuid=user-uuid&walletId=1"
 ```
 
-### 9. Получение транзакции по категории (/transaction)
+### 10. Получение транзакции по категории (/transaction)
 
 - **Метод:** GET
 - **URL:** `http://localhost:8000/transaction?uuid=user-uuid&categoryId=1`
 
 ```
 curl -X GET "http://localhost:8000/transaction?uuid=user-uuid&categoryId=1"
+```
+
+### 11. Получение общих доходов и расходов по кошельку (/summary)
+
+- **Метод:** POST
+- **URL:** `http://localhost:8000/summary`
+- **Заголовки:**
+  - `Content-Type: application/json`
+- **Тело запроса:**
+```json
+{
+    {
+      "uuid": "user-uuid",
+      "walletId": 1,
+    }
+}
+```
+
+```
+curl -X POST http://localhost:8000/summary -H "Content-Type: application/json" -d '{"uuid": "user-unique-identifier", "walletId": 123}'
+```
+
+### 12. Получение общих доходов и расходов по категории/категориям (/summary)
+
+- **Метод:** POST
+- **URL:** `http://localhost:8000/summary`
+- **Заголовки:**
+  - `Content-Type: application/json`
+- **Тело запроса:**
+```json
+{
+    {
+      "uuid": "user-uuid",
+      "walletId": 1,
+      "categoryIds": [1, 2, 3]
+  }
+}
+```
+
+```
+ccurl -X POST http://localhost:8000/summary -H "Content-Type: application/json" -d '{"uuid": "user-unique-identifier", "walletId": 123, "categoryIds": [1, 2, 3]}'
 ```
