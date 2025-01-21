@@ -13,7 +13,7 @@
 - **Тело запроса:**
 ```json
 {
-    "body": {
+    {
       "username": "user",
       "password": "password"
     }
@@ -33,7 +33,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"username":"user","passwor
 - **Тело запроса:**
 ```json
 {
-    "body": {
+    {
       "username": "user",
       "password": "password"
     }
@@ -53,7 +53,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"username":"user","passwor
 - **Тело запроса:**
 ```json
 {
-    "body": {
+    {
       "uuid": "user-uuid",
       "name": "My Wallet",
       "initialBalance": 1000.0
